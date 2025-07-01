@@ -1,12 +1,11 @@
-const express = require('express');
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+import express from "express";
+import fetch from "node-fetch";
 const app = express();
 app.use(express.json());
 
 const NOTION_API_TOKEN = process.env.NOTION_API_TOKEN;
 
 app.post('/notion/:resource*', async (req, res) => {
-  // Permite rutas como /notion/databases/XXX/query o /notion/pages
   const resource = req.params.resource + (req.params[0] || '');
   const url = `https://api.notion.com/v1/${resource}`;
   try {
