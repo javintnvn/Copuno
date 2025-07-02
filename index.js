@@ -1,11 +1,14 @@
 import express from "express";
 import fetch from "node-fetch";
+import cors from "cors";
+
 const app = express();
+app.use(cors()); // Habilita CORS para cualquier origen (frontend público)
 app.use(express.json());
 
 const NOTION_API_TOKEN = process.env.NOTION_API_TOKEN;
 
-// POST: para databases/ID/query y pages (crear)
+// POST: para consultar bases de datos y crear páginas
 app.post('/notion/:resource*', async (req, res) => {
   const resource = req.params.resource + (req.params[0] || '');
   const url = `https://api.notion.com/v1/${resource}`;
@@ -26,7 +29,7 @@ app.post('/notion/:resource*', async (req, res) => {
   }
 });
 
-// GET: para obtener una página concreta
+// GET: para obtener detalles de una página Notion
 app.get('/notion/pages/:id', async (req, res) => {
   const url = `https://api.notion.com/v1/pages/${req.params.id}`;
   try {
@@ -44,6 +47,7 @@ app.get('/notion/pages/:id', async (req, res) => {
   }
 });
 
+// Endpoint raíz para probar
 app.get('/', (req, res) => res.send('Notion Proxy OK'));
 
 const PORT = process.env.PORT || 3000;
