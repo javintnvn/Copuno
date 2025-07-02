@@ -5,6 +5,7 @@ app.use(express.json());
 
 const NOTION_API_TOKEN = process.env.NOTION_API_TOKEN;
 
+// POST: para databases/ID/query y pages (crear)
 app.post('/notion/:resource*', async (req, res) => {
   const resource = req.params.resource + (req.params[0] || '');
   const url = `https://api.notion.com/v1/${resource}`;
@@ -21,7 +22,25 @@ app.post('/notion/:resource*', async (req, res) => {
     const data = await notionRes.json();
     res.status(notionRes.status).json(data);
   } catch (e) {
-    res.status(500).json({error: e.message});
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET: para obtener una página concreta
+app.get('/notion/pages/:id', async (req, res) => {
+  const url = `https://api.notion.com/v1/pages/${req.params.id}`;
+  try {
+    const notionRes = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${NOTION_API_TOKEN}`,
+        'Notion-Version': '2022-06-28'
+      }
+    });
+    const data = await notionRes.json();
+    res.status(notionRes.status).json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 
